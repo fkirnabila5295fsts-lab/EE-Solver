@@ -5,14 +5,16 @@ import { BookOpen, Zap, Check, Clock, ArrowRight, ChevronDown } from "lucide-rea
 import { getAllRecentlySolved, RecentlySolved, useRecentlyUpdatedEvent } from "../data/variables";
 import { formatNumber } from "../data/equations";
 
-// ─── Floating orbs ────────────────────────────────────────────────────────────
+// ─── Floating soft orbs ───────────────────────────────────────────────────────
 const orbs = [
-  { size: 520, x: "3%",  y: "8%",  color: "rgba(37,99,235,0.16)",  duration: 18, delay: 0 },
-  { size: 340, x: "70%", y: "5%",  color: "rgba(124,58,237,0.12)", duration: 22, delay: 3 },
-  { size: 560, x: "52%", y: "50%", color: "rgba(37,99,235,0.08)",  duration: 26, delay: 6 },
-  { size: 280, x: "16%", y: "65%", color: "rgba(6,182,212,0.13)",  duration: 20, delay: 2 },
-  { size: 400, x: "80%", y: "72%", color: "rgba(168,85,247,0.08)", duration: 28, delay: 9 },
-  { size: 230, x: "36%", y: "25%", color: "rgba(16,185,129,0.09)", duration: 16, delay: 4 },
+  { size: 560, x: "0%",  y: "5%",  color: "rgba(37,99,235,0.18)",  duration: 20, delay: 0 },
+  { size: 380, x: "68%", y: "2%",  color: "rgba(124,58,237,0.14)", duration: 24, delay: 3 },
+  { size: 600, x: "48%", y: "45%", color: "rgba(37,99,235,0.09)",  duration: 28, delay: 6 },
+  { size: 300, x: "12%", y: "60%", color: "rgba(6,182,212,0.15)",  duration: 22, delay: 2 },
+  { size: 440, x: "78%", y: "68%", color: "rgba(168,85,247,0.10)", duration: 30, delay: 9 },
+  { size: 260, x: "32%", y: "22%", color: "rgba(16,185,129,0.10)", duration: 18, delay: 4 },
+  { size: 200, x: "85%", y: "30%", color: "rgba(6,182,212,0.11)",  duration: 16, delay: 7 },
+  { size: 180, x: "55%", y: "80%", color: "rgba(124,58,237,0.10)", duration: 20, delay: 11 },
 ];
 
 function FloatingOrbs() {
@@ -26,9 +28,9 @@ function FloatingOrbs() {
             width: orb.size, height: orb.size,
             left: orb.x, top: orb.y,
             backgroundColor: orb.color,
-            filter: "blur(90px)",
+            filter: "blur(88px)",
           }}
-          animate={{ x: [0, 30, -18, 12, 0], y: [0, -24, 18, -8, 0] }}
+          animate={{ x: [0, 28, -16, 10, 0], y: [0, -22, 16, -6, 0] }}
           transition={{ duration: orb.duration, repeat: Infinity, ease: "easeInOut", delay: orb.delay }}
         />
       ))}
@@ -42,7 +44,7 @@ function AnimatedGrid() {
     <div
       className="absolute inset-0 z-0 pointer-events-none"
       style={{
-        backgroundImage: `linear-gradient(rgba(37,99,235,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(37,99,235,0.04) 1px, transparent 1px)`,
+        backgroundImage: `linear-gradient(rgba(37,99,235,0.045) 1px, transparent 1px), linear-gradient(90deg, rgba(37,99,235,0.045) 1px, transparent 1px)`,
         backgroundSize: "64px 64px",
         maskImage: "radial-gradient(ellipse 80% 60% at 50% 50%, black 0%, transparent 100%)",
       }}
@@ -50,7 +52,148 @@ function AnimatedGrid() {
   );
 }
 
-// scan line removed
+// ─── Radar / sonar rings expanding from center ────────────────────────────────
+function RadarRings() {
+  const rings = [
+    { size: 180,  delay: 0,    color: "rgba(37,99,235,0.35)" },
+    { size: 340,  delay: 0.9,  color: "rgba(37,99,235,0.22)" },
+    { size: 520,  delay: 1.8,  color: "rgba(124,58,237,0.16)" },
+    { size: 720,  delay: 2.7,  color: "rgba(37,99,235,0.10)" },
+    { size: 940,  delay: 3.6,  color: "rgba(6,182,212,0.07)" },
+    { size: 1180, delay: 4.5,  color: "rgba(37,99,235,0.04)" },
+  ];
+  return (
+    <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden flex items-center justify-center">
+      {rings.map((r, i) => (
+        <motion.div
+          key={i}
+          className="absolute rounded-full border"
+          style={{ borderColor: r.color, width: r.size, height: r.size }}
+          initial={{ opacity: 0, scale: 0.4 }}
+          animate={{ opacity: [0, 0.9, 0.5, 0], scale: [0.4, 1, 1.15, 1.3] }}
+          transition={{
+            duration: 6,
+            repeat: Infinity,
+            delay: r.delay,
+            ease: [0.16, 1, 0.3, 1],
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+// ─── Crisp decorative circles (static rings that breathe) ────────────────────
+function DecorativeRings() {
+  return (
+    <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden flex items-center justify-center">
+      {/* Thin standing rings */}
+      {[300, 480, 660, 860].map((size, i) => (
+        <motion.div
+          key={i}
+          className="absolute rounded-full border"
+          style={{
+            width: size, height: size,
+            borderColor: i % 2 === 0
+              ? "rgba(37,99,235,0.08)"
+              : "rgba(124,58,237,0.06)",
+            borderStyle: i === 1 ? "dashed" : "solid",
+          }}
+          animate={{ rotate: i % 2 === 0 ? [0, 360] : [360, 0] }}
+          transition={{ duration: 60 + i * 20, repeat: Infinity, ease: "linear" }}
+        />
+      ))}
+    </div>
+  );
+}
+
+// ─── Orbiting dots on circular paths ─────────────────────────────────────────
+function OrbitingDots() {
+  const orbits = [
+    { r: 150, dotSize: 5, color: "#3b82f6", duration: 8,  startAngle: 0,   opacity: 0.8 },
+    { r: 150, dotSize: 3, color: "#818cf8", duration: 8,  startAngle: 180, opacity: 0.5 },
+    { r: 240, dotSize: 4, color: "#06b6d4", duration: 14, startAngle: 60,  opacity: 0.7 },
+    { r: 240, dotSize: 3, color: "#7c3aed", duration: 14, startAngle: 240, opacity: 0.45 },
+    { r: 330, dotSize: 5, color: "#2563eb", duration: 20, startAngle: 120, opacity: 0.6 },
+    { r: 330, dotSize: 2, color: "#a5f3fc", duration: 20, startAngle: 300, opacity: 0.4 },
+  ];
+  return (
+    <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden flex items-center justify-center">
+      {orbits.map((o, i) => (
+        <motion.div
+          key={i}
+          className="absolute"
+          style={{ width: o.r * 2, height: o.r * 2 }}
+          animate={{ rotate: [o.startAngle, o.startAngle + 360] }}
+          transition={{ duration: o.duration, repeat: Infinity, ease: "linear" }}
+        >
+          {/* The dot at the "top" of its orbit */}
+          <motion.div
+            className="absolute rounded-full"
+            style={{
+              width: o.dotSize, height: o.dotSize,
+              top: 0,
+              left: "50%",
+              transform: "translateX(-50%)",
+              backgroundColor: o.color,
+              opacity: o.opacity,
+              boxShadow: `0 0 ${o.dotSize * 3}px ${o.color}`,
+            }}
+            animate={{ opacity: [o.opacity * 0.5, o.opacity, o.opacity * 0.5] }}
+            transition={{ duration: o.duration / 2, repeat: Infinity, ease: "easeInOut" }}
+          />
+        </motion.div>
+      ))}
+    </div>
+  );
+}
+
+// ─── Floating particles (small twinkling dots) ────────────────────────────────
+const PARTICLES = Array.from({ length: 36 }, (_, i) => ({
+  x: `${(i * 37 + 11) % 100}%`,
+  y: `${(i * 53 + 7) % 100}%`,
+  size: (i % 4 === 0) ? 3 : (i % 3 === 0) ? 2 : 1.5,
+  color: i % 5 === 0
+    ? "rgba(99,179,237,0.7)"
+    : i % 4 === 0
+    ? "rgba(168,85,247,0.6)"
+    : i % 3 === 0
+    ? "rgba(6,182,212,0.5)"
+    : "rgba(37,99,235,0.5)",
+  duration: 3 + (i % 5),
+  delay: (i * 0.28) % 5,
+  floatY: -8 - (i % 10),
+}));
+
+function FloatingParticles() {
+  return (
+    <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+      {PARTICLES.map((p, i) => (
+        <motion.div
+          key={i}
+          className="absolute rounded-full"
+          style={{
+            left: p.x, top: p.y,
+            width: p.size, height: p.size,
+            backgroundColor: p.color,
+            boxShadow: `0 0 ${p.size * 2.5}px ${p.color}`,
+          }}
+          animate={{
+            y: [0, p.floatY, 0],
+            opacity: [0.2, 1, 0.2],
+            scale: [0.8, 1.4, 0.8],
+          }}
+          transition={{
+            duration: p.duration,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: p.delay,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
 
 // ─── Circuit illustration for Equation Library card ──────────────────────────
 function CircuitIllustration() {
@@ -250,6 +393,10 @@ export function HomePage() {
     <div className="relative min-h-[100dvh] w-full overflow-x-hidden bg-background">
       <FloatingOrbs />
       <AnimatedGrid />
+      <DecorativeRings />
+      <RadarRings />
+      <OrbitingDots />
+      <FloatingParticles />
 
       {/* ── HERO ──────────────────────────────────────────────────────────── */}
       <motion.section
