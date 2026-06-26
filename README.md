@@ -3,7 +3,7 @@
 — Built for Engineers Who Move Fast
 Solve electrical engineering problems instantly. No login, no backend headaches, just answers.
 
-🔗 Live demo: [smart-solver-flow--nf32.replit.app](https://ee-solver.vercel.app)
+🔗 Live demo: ee-solver.vercel.app
 
 What it does:
 
