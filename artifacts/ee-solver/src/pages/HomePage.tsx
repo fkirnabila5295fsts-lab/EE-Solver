@@ -282,7 +282,7 @@ export function HomePage() {
 
         {/* Title — "EE" massive, "SOLVER" same line but stepped down */}
         <h1 className="flex items-baseline justify-center font-serif font-bold tracking-tight mb-4 leading-none flex-wrap gap-x-3">
-          {/* EE — big */}
+          {/* EE — big, classy Cormorant Garamond */}
           {"EE".split("").map((letter, i) => (
             <motion.span
               key={`ee-${i}`}
@@ -291,13 +291,16 @@ export function HomePage() {
               transition={{ delay: i * 0.07, duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
               style={{
                 fontSize: "clamp(5rem, 18vw, 10rem)",
+                fontFamily: "'Cormorant Garamond', serif",
+                fontWeight: 600,
+                fontStyle: "italic",
                 background: "linear-gradient(135deg, #93c5fd 0%, #3b82f6 35%, #2563eb 60%, #818cf8 100%)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
                 backgroundClip: "text",
                 filter: "drop-shadow(0 0 32px rgba(37,99,235,0.65))",
                 lineHeight: 1,
-                letterSpacing: "-0.02em",
+                letterSpacing: "-0.01em",
               }}
             >
               {letter}
@@ -309,10 +312,11 @@ export function HomePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
             style={{
-              fontSize: "clamp(1.8rem, 6vw, 3.6rem)",
-              color: "hsl(var(--foreground) / 0.85)",
-              letterSpacing: "0.18em",
-              fontWeight: 500,
+              fontSize: "clamp(1.5rem, 5vw, 3rem)",
+              fontFamily: "'Cormorant Garamond', serif",
+              fontWeight: 400,
+              color: "hsl(var(--foreground) / 0.75)",
+              letterSpacing: "0.28em",
             }}
           >
             SOLVER
@@ -324,7 +328,7 @@ export function HomePage() {
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.75, duration: 0.6 }}
-          className="font-sans text-lg md:text-2xl text-muted-foreground mb-6 max-w-lg"
+          className="font-sans text-sm md:text-base text-muted-foreground mb-6 max-w-sm"
         >
           Solve electrical engineering problems instantly.<br />
           <span className="text-foreground/70">Browse equations or let the smart solver do the work.</span>
