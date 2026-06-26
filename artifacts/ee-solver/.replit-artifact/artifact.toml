@@ -1,0 +1,27 @@
+kind = "web"
+previewPath = "/"
+title = "EE Solver"
+version = "1.0.0"
+id = "artifacts/ee-solver"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 24655
+
+[services.development]
+run = "pnpm --filter @workspace/ee-solver run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/ee-solver", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/ee-solver/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "24655"
+BASE_PATH = "/"

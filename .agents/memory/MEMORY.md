@@ -1,0 +1,1 @@
+- [EE Solver architecture](ee-solver-arch.md) — fully client-side React+Vite app; routing uses wouter Router with BASE_URL; localStorage for recents.
