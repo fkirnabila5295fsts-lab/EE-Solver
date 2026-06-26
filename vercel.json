@@ -1,0 +1,6 @@
+{
+  "buildCommand": "cd artifacts/ee-solver && pnpm run build",
+  "outputDirectory": "artifacts/ee-solver/dist",
+  "installCommand": "pnpm install",
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+}
