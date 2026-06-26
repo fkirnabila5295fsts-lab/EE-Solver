@@ -13,10 +13,15 @@ Browse a curated equation library, let the Smart Solver figure out which formula
 ✨ Features:
 
 📚 Equation Library — 23 essential EE equations (Ohm's Law, power formulas, RC time constants, resonant frequency, and more), each with its own calculator and full unit conversion.
+
 ⚡ Smart Solver — Enter the variables you know, it automatically matches them to the right equation and solves for what's missing.
+
 🕓 Recently Solved — Your last calculations saved automatically, one click away from reopening.
+
 🛠 Tech Stack
+
 LayerStackFrontendReact + Vite + TypeScript, Tailwind CSS, Framer MotionBackendExpress + Drizzle ORMToolingpnpm monorepo, tsc
+
 
 📄 License:
 MIT
