@@ -292,7 +292,7 @@ export function HomePage() {
               style={{
                 fontSize: "clamp(5rem, 18vw, 10rem)",
                 fontFamily: "'Cormorant Garamond', serif",
-                fontWeight: 600,
+                fontWeight: 700,
                 fontStyle: "italic",
                 background: "linear-gradient(135deg, #93c5fd 0%, #3b82f6 35%, #2563eb 60%, #818cf8 100%)",
                 WebkitBackgroundClip: "text",
@@ -314,8 +314,8 @@ export function HomePage() {
             style={{
               fontSize: "clamp(1.5rem, 5vw, 3rem)",
               fontFamily: "'Cormorant Garamond', serif",
-              fontWeight: 400,
-              color: "hsl(var(--foreground) / 0.75)",
+              fontWeight: 700,
+              color: "hsl(var(--foreground) / 0.85)",
               letterSpacing: "0.28em",
             }}
           >
