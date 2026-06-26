@@ -1,7 +1,8 @@
-⚡ EE Solver — Built for Engineers Who Move Fast
+⚡ EE Solver
+— Built for Engineers Who Move Fast
 Solve electrical engineering problems instantly. No login, no backend headaches, just answers.
 
-🔗 Live demo: smart-solver-flow--nf32.replit.app
+🔗 Live demo: [smart-solver-flow--nf32.replit.app](https://ee-solver.vercel.app)
 
 What it does
 Browse a curated equation library, let the Smart Solver figure out which formula fits what you know, and jump back into recent calculations any time.
