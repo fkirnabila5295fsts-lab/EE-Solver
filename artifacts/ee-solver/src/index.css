@@ -126,26 +126,53 @@
 .custom-scrollbar::-webkit-scrollbar-thumb { background: hsl(var(--border)); border-radius: 9999px; }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: hsl(var(--primary) / 0.4); }
 
-/* Scan line animation */
+/* ── Background animation keyframes ─────────────────────────────────────────
+   All purely transform/opacity — compositor-thread only, zero JS overhead.   */
+
+/* Orb drift variants — each orb gets a unique path */
+@keyframes orb-a {
+  0%,100% { transform: translate(0,0); }
+  33%      { transform: translate(28px,-22px); }
+  66%      { transform: translate(-16px,14px); }
+}
+@keyframes orb-b {
+  0%,100% { transform: translate(0,0); }
+  33%      { transform: translate(-24px,18px); }
+  66%      { transform: translate(20px,-12px); }
+}
+@keyframes orb-c {
+  0%,100% { transform: translate(0,0); }
+  25%      { transform: translate(18px,28px); }
+  50%      { transform: translate(-20px,10px); }
+  75%      { transform: translate(10px,-20px); }
+}
+
+/* Radar ring: expand from centre and fade */
+@keyframes radar-expand {
+  0%   { transform: scale(0.3); opacity: 0; }
+  15%  { opacity: 0.85; }
+  70%  { opacity: 0.3; }
+  100% { transform: scale(1.35); opacity: 0; }
+}
+
+/* Orbiting container spins */
+@keyframes spin-cw  { to { transform: rotate(360deg);  } }
+@keyframes spin-ccw { to { transform: rotate(-360deg); } }
+
+/* Particle twinkle — only opacity + translateY */
+@keyframes particle-rise {
+  0%,100% { transform: translateY(0);    opacity: 0.15; }
+  50%      { transform: translateY(-10px); opacity: 0.85; }
+}
+
+/* Scan line (kept for compat) */
 @keyframes scanline {
-  0% { transform: translateY(-100%); }
+  0%   { transform: translateY(-100%); }
   100% { transform: translateY(100vh); }
 }
-
-.animate-scanline {
-  animation: scanline 6s linear infinite;
-}
-
-/* Glitch text keyframes */
-@keyframes glitch-1 {
-  0%, 100% { clip-path: inset(0 0 90% 0); transform: translate(-2px, 0); }
-  20% { clip-path: inset(50% 0 30% 0); transform: translate(2px, 0); }
-  40% { clip-path: inset(20% 0 60% 0); transform: translate(-1px, 0); }
-  60% { clip-path: inset(80% 0 5% 0); transform: translate(1px, 0); }
-  80% { clip-path: inset(10% 0 70% 0); transform: translate(-2px, 0); }
-}
+.animate-scanline { animation: scanline 6s linear infinite; }
 
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-12px); }
+  50%       { transform: translateY(-12px); }
 }

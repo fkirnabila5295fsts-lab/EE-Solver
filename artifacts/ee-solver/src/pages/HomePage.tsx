@@ -1,44 +1,43 @@
 import { useState, useEffect, useRef } from "react";
-import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { Link, useLocation } from "wouter";
 import { BookOpen, Zap, Check, Clock, ArrowRight, ChevronDown } from "lucide-react";
 import { getAllRecentlySolved, RecentlySolved, useRecentlyUpdatedEvent } from "../data/variables";
 import { formatNumber } from "../data/equations";
 
-// ─── Floating soft orbs ───────────────────────────────────────────────────────
-const orbs = [
-  { size: 560, x: "0%",  y: "5%",  color: "rgba(37,99,235,0.18)",  duration: 20, delay: 0 },
-  { size: 380, x: "68%", y: "2%",  color: "rgba(124,58,237,0.14)", duration: 24, delay: 3 },
-  { size: 600, x: "48%", y: "45%", color: "rgba(37,99,235,0.09)",  duration: 28, delay: 6 },
-  { size: 300, x: "12%", y: "60%", color: "rgba(6,182,212,0.15)",  duration: 22, delay: 2 },
-  { size: 440, x: "78%", y: "68%", color: "rgba(168,85,247,0.10)", duration: 30, delay: 9 },
-  { size: 260, x: "32%", y: "22%", color: "rgba(16,185,129,0.10)", duration: 18, delay: 4 },
-  { size: 200, x: "85%", y: "30%", color: "rgba(6,182,212,0.11)",  duration: 16, delay: 7 },
-  { size: 180, x: "55%", y: "80%", color: "rgba(124,58,237,0.10)", duration: 20, delay: 11 },
+// ─── Floating soft orbs — pure CSS animation (compositor thread) ──────────────
+const ORB_DATA = [
+  { size: 560, x: "0%",   y: "5%",  color: "rgba(37,99,235,0.18)",  kf: "orb-a", dur: "22s", delay: "0s"   },
+  { size: 380, x: "68%",  y: "2%",  color: "rgba(124,58,237,0.14)", kf: "orb-b", dur: "26s", delay: "3s"   },
+  { size: 600, x: "44%",  y: "42%", color: "rgba(37,99,235,0.09)",  kf: "orb-c", dur: "30s", delay: "6s"   },
+  { size: 300, x: "10%",  y: "58%", color: "rgba(6,182,212,0.15)",  kf: "orb-a", dur: "24s", delay: "2s"   },
+  { size: 440, x: "76%",  y: "65%", color: "rgba(168,85,247,0.10)", kf: "orb-b", dur: "32s", delay: "9s"   },
+  { size: 260, x: "30%",  y: "20%", color: "rgba(16,185,129,0.10)", kf: "orb-c", dur: "20s", delay: "4s"   },
 ];
 
 function FloatingOrbs() {
   return (
     <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-      {orbs.map((orb, i) => (
-        <motion.div
+      {ORB_DATA.map((orb, i) => (
+        <div
           key={i}
           className="absolute rounded-full"
           style={{
             width: orb.size, height: orb.size,
             left: orb.x, top: orb.y,
             backgroundColor: orb.color,
-            filter: "blur(88px)",
+            filter: "blur(80px)",
+            willChange: "transform",
+            animation: `${orb.kf} ${orb.dur} ease-in-out infinite`,
+            animationDelay: orb.delay,
           }}
-          animate={{ x: [0, 28, -16, 10, 0], y: [0, -22, 16, -6, 0] }}
-          transition={{ duration: orb.duration, repeat: Infinity, ease: "easeInOut", delay: orb.delay }}
         />
       ))}
     </div>
   );
 }
 
-// ─── Animated grid ────────────────────────────────────────────────────────────
+// ─── Animated grid (static, no JS needed) ─────────────────────────────────────
 function AnimatedGrid() {
   return (
     <div
@@ -52,142 +51,139 @@ function AnimatedGrid() {
   );
 }
 
-// ─── Radar / sonar rings expanding from center ────────────────────────────────
-function RadarRings() {
-  const rings = [
-    { size: 180,  delay: 0,    color: "rgba(37,99,235,0.35)" },
-    { size: 340,  delay: 0.9,  color: "rgba(37,99,235,0.22)" },
-    { size: 520,  delay: 1.8,  color: "rgba(124,58,237,0.16)" },
-    { size: 720,  delay: 2.7,  color: "rgba(37,99,235,0.10)" },
-    { size: 940,  delay: 3.6,  color: "rgba(6,182,212,0.07)" },
-    { size: 1180, delay: 4.5,  color: "rgba(37,99,235,0.04)" },
-  ];
-  return (
-    <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden flex items-center justify-center">
-      {rings.map((r, i) => (
-        <motion.div
-          key={i}
-          className="absolute rounded-full border"
-          style={{ borderColor: r.color, width: r.size, height: r.size }}
-          initial={{ opacity: 0, scale: 0.4 }}
-          animate={{ opacity: [0, 0.9, 0.5, 0], scale: [0.4, 1, 1.15, 1.3] }}
-          transition={{
-            duration: 6,
-            repeat: Infinity,
-            delay: r.delay,
-            ease: [0.16, 1, 0.3, 1],
-          }}
-        />
-      ))}
-    </div>
-  );
-}
+// ─── Radar rings — pure CSS expand + fade ─────────────────────────────────────
+const RADAR_RINGS = [
+  { size: 200,  delay: "0s",    color: "rgba(37,99,235,0.40)",  dur: "5s"  },
+  { size: 380,  delay: "0.9s",  color: "rgba(37,99,235,0.28)",  dur: "5s"  },
+  { size: 580,  delay: "1.8s",  color: "rgba(124,58,237,0.18)", dur: "5s"  },
+  { size: 800,  delay: "2.7s",  color: "rgba(37,99,235,0.12)",  dur: "5s"  },
+  { size: 1040, delay: "3.6s",  color: "rgba(6,182,212,0.08)",  dur: "5s"  },
+];
 
-// ─── Crisp decorative circles (static rings that breathe) ────────────────────
-function DecorativeRings() {
+function RadarRings() {
   return (
     <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden flex items-center justify-center">
-      {/* Thin standing rings */}
-      {[300, 480, 660, 860].map((size, i) => (
-        <motion.div
+      {RADAR_RINGS.map((r, i) => (
+        <div
           key={i}
           className="absolute rounded-full border"
           style={{
-            width: size, height: size,
-            borderColor: i % 2 === 0
-              ? "rgba(37,99,235,0.08)"
-              : "rgba(124,58,237,0.06)",
-            borderStyle: i === 1 ? "dashed" : "solid",
+            width: r.size, height: r.size,
+            borderColor: r.color,
+            willChange: "transform, opacity",
+            animation: `radar-expand ${r.dur} cubic-bezier(0.16,1,0.3,1) infinite`,
+            animationDelay: r.delay,
           }}
-          animate={{ rotate: i % 2 === 0 ? [0, 360] : [360, 0] }}
-          transition={{ duration: 60 + i * 20, repeat: Infinity, ease: "linear" }}
         />
       ))}
     </div>
   );
 }
 
-// ─── Orbiting dots on circular paths ─────────────────────────────────────────
-function OrbitingDots() {
-  const orbits = [
-    { r: 150, dotSize: 5, color: "#3b82f6", duration: 8,  startAngle: 0,   opacity: 0.8 },
-    { r: 150, dotSize: 3, color: "#818cf8", duration: 8,  startAngle: 180, opacity: 0.5 },
-    { r: 240, dotSize: 4, color: "#06b6d4", duration: 14, startAngle: 60,  opacity: 0.7 },
-    { r: 240, dotSize: 3, color: "#7c3aed", duration: 14, startAngle: 240, opacity: 0.45 },
-    { r: 330, dotSize: 5, color: "#2563eb", duration: 20, startAngle: 120, opacity: 0.6 },
-    { r: 330, dotSize: 2, color: "#a5f3fc", duration: 20, startAngle: 300, opacity: 0.4 },
-  ];
+// ─── Decorative spinning rings — pure CSS ─────────────────────────────────────
+const DECO_RINGS = [
+  { size: 320,  kf: "spin-cw",  dur: "70s",  color: "rgba(37,99,235,0.09)",  style: "solid"  },
+  { size: 500,  kf: "spin-ccw", dur: "90s",  color: "rgba(124,58,237,0.07)", style: "dashed" },
+  { size: 700,  kf: "spin-cw",  dur: "120s", color: "rgba(37,99,235,0.06)",  style: "solid"  },
+  { size: 920,  kf: "spin-ccw", dur: "160s", color: "rgba(6,182,212,0.04)",  style: "solid"  },
+];
+
+function DecorativeRings() {
   return (
     <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden flex items-center justify-center">
-      {orbits.map((o, i) => (
-        <motion.div
+      {DECO_RINGS.map((r, i) => (
+        <div
           key={i}
-          className="absolute"
-          style={{ width: o.r * 2, height: o.r * 2 }}
-          animate={{ rotate: [o.startAngle, o.startAngle + 360] }}
-          transition={{ duration: o.duration, repeat: Infinity, ease: "linear" }}
-        >
-          {/* The dot at the "top" of its orbit */}
-          <motion.div
-            className="absolute rounded-full"
-            style={{
-              width: o.dotSize, height: o.dotSize,
-              top: 0,
-              left: "50%",
-              transform: "translateX(-50%)",
-              backgroundColor: o.color,
-              opacity: o.opacity,
-              boxShadow: `0 0 ${o.dotSize * 3}px ${o.color}`,
-            }}
-            animate={{ opacity: [o.opacity * 0.5, o.opacity, o.opacity * 0.5] }}
-            transition={{ duration: o.duration / 2, repeat: Infinity, ease: "easeInOut" }}
-          />
-        </motion.div>
+          className="absolute rounded-full border"
+          style={{
+            width: r.size, height: r.size,
+            borderColor: r.color,
+            borderStyle: r.style,
+            willChange: "transform",
+            animation: `${r.kf} ${r.dur} linear infinite`,
+          }}
+        />
       ))}
     </div>
   );
 }
 
-// ─── Floating particles (small twinkling dots) ────────────────────────────────
-const PARTICLES = Array.from({ length: 36 }, (_, i) => ({
-  x: `${(i * 37 + 11) % 100}%`,
-  y: `${(i * 53 + 7) % 100}%`,
-  size: (i % 4 === 0) ? 3 : (i % 3 === 0) ? 2 : 1.5,
-  color: i % 5 === 0
-    ? "rgba(99,179,237,0.7)"
-    : i % 4 === 0
-    ? "rgba(168,85,247,0.6)"
-    : i % 3 === 0
-    ? "rgba(6,182,212,0.5)"
-    : "rgba(37,99,235,0.5)",
-  duration: 3 + (i % 5),
-  delay: (i * 0.28) % 5,
-  floatY: -8 - (i % 10),
+// ─── Orbiting dots — CSS spin on container, dot pinned at top ─────────────────
+const ORBIT_DATA = [
+  { r: 160, dotSize: 5, color: "#3b82f6", dur: "9s",  startDeg: 0   },
+  { r: 160, dotSize: 3, color: "#818cf8", dur: "9s",  startDeg: 180 },
+  { r: 260, dotSize: 4, color: "#06b6d4", dur: "15s", startDeg: 60  },
+  { r: 260, dotSize: 3, color: "#7c3aed", dur: "15s", startDeg: 240 },
+  { r: 360, dotSize: 5, color: "#2563eb", dur: "22s", startDeg: 120 },
+  { r: 360, dotSize: 2, color: "#a5f3fc", dur: "22s", startDeg: 300 },
+];
+
+function OrbitingDots() {
+  return (
+    <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden flex items-center justify-center">
+      {ORBIT_DATA.map((o, i) => (
+        /* Outer: sets phase offset as a static rotate — no animation conflict.
+           Inner: runs the full 0→360 spin cleanly with no snap at loop boundary. */
+        <div
+          key={i}
+          className="absolute"
+          style={{ width: o.r * 2, height: o.r * 2, transform: `rotate(${o.startDeg}deg)` }}
+        >
+          <div
+            className="absolute inset-0"
+            style={{
+              willChange: "transform",
+              animation: `spin-cw ${o.dur} linear infinite`,
+            }}
+          >
+            <div
+              className="absolute rounded-full"
+              style={{
+                width: o.dotSize,
+                height: o.dotSize,
+                top: 0,
+                left: "50%",
+                marginLeft: -(o.dotSize / 2),
+                backgroundColor: o.color,
+                boxShadow: `0 0 ${o.dotSize * 3}px ${o.color}`,
+                opacity: 0.85,
+              }}
+            />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ─── Floating particles — pure CSS, opacity + translateY only ─────────────────
+const PARTICLES = Array.from({ length: 20 }, (_, i) => ({
+  x: `${(i * 47 + 13) % 100}%`,
+  y: `${(i * 61 + 9)  % 100}%`,
+  size: i % 4 === 0 ? 3 : i % 3 === 0 ? 2 : 1.5,
+  color: i % 5 === 0 ? "rgba(99,179,237,0.75)"
+       : i % 4 === 0 ? "rgba(168,85,247,0.65)"
+       : i % 3 === 0 ? "rgba(6,182,212,0.55)"
+       :               "rgba(59,130,246,0.55)",
+  dur: `${3 + (i % 5)}s`,
+  delay: `${(i * 0.31) % 5}s`,
 }));
 
 function FloatingParticles() {
   return (
     <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
       {PARTICLES.map((p, i) => (
-        <motion.div
+        <div
           key={i}
           className="absolute rounded-full"
           style={{
             left: p.x, top: p.y,
             width: p.size, height: p.size,
             backgroundColor: p.color,
-            boxShadow: `0 0 ${p.size * 2.5}px ${p.color}`,
-          }}
-          animate={{
-            y: [0, p.floatY, 0],
-            opacity: [0.2, 1, 0.2],
-            scale: [0.8, 1.4, 0.8],
-          }}
-          transition={{
-            duration: p.duration,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: p.delay,
+            boxShadow: `0 0 ${p.size * 2}px ${p.color}`,
+            willChange: "transform, opacity",
+            animation: `particle-rise ${p.dur} ease-in-out infinite`,
+            animationDelay: p.delay,
           }}
         />
       ))}
